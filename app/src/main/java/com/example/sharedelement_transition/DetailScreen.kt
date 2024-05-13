@@ -1,5 +1,9 @@
 package com.example.sharedelement_transition
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,10 +22,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun DetailScreen(
+fun SharedTransitionScope.DetailScreen(
     resId: Int,
-    text: String
+    text: String,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     Column(
         modifier = Modifier
@@ -34,12 +40,26 @@ fun DetailScreen(
             modifier = Modifier
                 .aspectRatio(16 / 9f)
                 .weight(1f)
+                .sharedElement(
+                    state = rememberSharedContentState(key = "image/$resId"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 1000)
+                    }
+                )
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = text,
             modifier = Modifier
                 .weight(1f)
+                .sharedElement(
+                    state = rememberSharedContentState(key = "image/$text"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 1000)
+                    }
+                )
         )
     }
 }
